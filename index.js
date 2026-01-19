@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -38,6 +38,16 @@ async function run() {
       const result = await modelCollection.find().toArray();
 
       res.send(result);
+    });
+
+    // findOne view details
+    app.get("/challenges/:id", async (req, res) => {
+      const id = req.params.id;
+      const challenge = await modelCollection.findOne({
+        _id: new ObjectId(id),
+      });
+      if (!challenge) return res.status(404).send({ message: "Not found" });
+      res.send(challenge);
     });
 
     await client.db("admin").command({ ping: 1 });
