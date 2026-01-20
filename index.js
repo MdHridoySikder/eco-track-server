@@ -27,13 +27,13 @@ async function run() {
     // get method
     // find
     // find one
-    // Home page → only 4 challenges
+    // only 4 challenges(home)
     app.get("/challenges/home", async (req, res) => {
       const result = await modelCollection.find().limit(4).toArray();
 
       res.send(result);
     });
-
+    // challenges all data
     app.get("/challenges", async (req, res) => {
       const result = await modelCollection.find().toArray();
 
@@ -48,6 +48,65 @@ async function run() {
       });
       if (!challenge) return res.status(404).send({ message: "Not found" });
       res.send(challenge);
+    });
+
+    // post
+    // insertone
+    // insertmany
+    app.post("/challenges", async (req, res) => {
+      const data = req.body;
+      console.log(data);
+
+      const result = await modelCollection.insertOne(data);
+
+      res.send({ success: true, result });
+    });
+
+    // PUT;
+    // updateOne;
+    // Updatemany;
+
+    app.put("/challenges/:id", async (req, res) => {
+      const id = req.params.id;
+      const data = req.body;
+
+      const ObjectId = new ObjectId(id);
+      const filter = { _id: ObjectId };
+
+      const updateDoc = {
+        $set: data,
+      };
+
+      const result = await modelCollection.updateOne(filter, updateDoc);
+
+      res.send({
+        success: true,
+        result,
+      });
+    });
+
+    // delete
+    // deleteOne
+    const { ObjectId } = require("mongodb");
+
+    app.delete("/challenges/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) };
+
+        const result = await modelCollection.deleteOne(filter);
+
+        if (result.deletedCount === 0) {
+          return res
+            .status(404)
+            .send({ success: false, message: "Challenge not found" });
+        }
+
+        res.send({ success: true, message: "Challenge deleted successfully" });
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ success: false, message: "Server error" });
+      }
     });
 
     await client.db("admin").command({ ping: 1 });
