@@ -25,6 +25,7 @@ async function run() {
     const db = client.db("eco-track-db");
     const modelCollection = db.collection("challenges");
     const tipsCollection = db.collection("tips");
+    const eventsCollection = db.collection("events");
     // get method
     // find
     // find one
@@ -131,7 +132,7 @@ async function run() {
 
     // GET all tips
 
-    //all  Tips section
+    //all Recent Tips: section
 
     app.get("/tips", async (req, res) => {
       const result = await tipsCollection.find().toArray();
@@ -139,9 +140,9 @@ async function run() {
       res.send(result);
     });
 
-    // all events section
-    app.get("/tips", async (req, res) => {
-      const result = await tipsCollection.find().toArray();
+    // all Upcoming Events: section:
+    app.get("/events", async (req, res) => {
+      const result = await eventsCollection.find().toArray();
 
       res.send(result);
     });
