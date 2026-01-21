@@ -24,6 +24,7 @@ async function run() {
     await client.connect();
     const db = client.db("eco-track-db");
     const modelCollection = db.collection("challenges");
+    const tipsCollection = db.collection("tips");
     // get method
     // find
     // find one
@@ -107,6 +108,42 @@ async function run() {
         console.error(error);
         res.status(500).send({ success: false, message: "Server error" });
       }
+    });
+
+    // my-activities
+    app.get("/my-activities", async (req, res) => {
+      const email = req.query.email;
+      const result = await modelCollection.find({ createdBy: email }).toArray();
+
+      res.send(result);
+    });
+    // count
+    app.patch("/challenges/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const result = await modelCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $inc: { participants: 1 } },
+      );
+
+      res.send(result);
+    });
+
+    // GET all tips
+
+    //all  Tips section
+
+    app.get("/tips", async (req, res) => {
+      const result = await tipsCollection.find().toArray();
+
+      res.send(result);
+    });
+
+    // all events section
+    app.get("/tips", async (req, res) => {
+      const result = await tipsCollection.find().toArray();
+
+      res.send(result);
     });
 
     await client.db("admin").command({ ping: 1 });
