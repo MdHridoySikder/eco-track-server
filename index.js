@@ -131,6 +131,15 @@ async function run() {
     });
 
     // GET all tips
+    // all Recent 4 Tips
+    app.get("/tips", async (req, res) => {
+      const limit = parseInt(req.query.limit);
+      const result = limit
+        ? await tipsCollection.find().limit(limit).toArray()
+        : await tipsCollection.find().toArray();
+
+      res.send(result);
+    });
 
     //all Recent Tips: section
 
